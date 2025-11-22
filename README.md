@@ -116,7 +116,7 @@ http://localhost:8080/login.html
 **Pavan Tsappati**  
 Backend Developer — Java • Spring Boot  
 📧 Email: _(optional)_  
-🔗 GitHub: https://github.com/YOUR-USERNAME  
+🔗 GitHub: https://github.com/PavanTsappati  
 
 ---
 

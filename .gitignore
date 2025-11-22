@@ -1,0 +1,44 @@
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+### Spring Boot ###
+logs/
+*.log
+*.tmp
+
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.iws
+*.ipr
+
+### VS Code ###
+.vscode/
+
+### Eclipse / STS ###
+.classpath
+.project
+.settings/
+.apt_generated/
+.factorypath
+.springBeans
+.sts4-cache
+bin/
+build/
+out/
+
+### System Files ###
+.DS_Store
+Thumbs.db
+
+### Node (If you add frontend later) ###
+node_modules/
+dist/
+
+### Misc ###
+*.bak

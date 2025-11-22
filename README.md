@@ -68,7 +68,7 @@ src/
 
 ### 1️⃣ Clone the project
 ```
-git clone https://github.com/YOUR-USERNAME/Task-Manager-App.git
+git clone https://github.com/PavanTsappati/Task-Manager-App.git
 cd Task-Manager-App
 ```
 

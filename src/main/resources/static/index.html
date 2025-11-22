@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Tasks - Task Manager</title>
+    <link rel="stylesheet" href="style.css" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+</head>
+<body>
+<div class="sidebar">
+    <h2>Task Manager</h2>
+    <a href="tasks.html" class="active">Tasks</a>
+    <a href="logs.html">Audit Logs</a>
+    <div style="margin-top:20px;">
+        <button class="btn" onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<div class="topbar">
+    <h1>Tasks</h1>
+</div>
+
+<div class="content">
+    <div class="create-card">
+        <h3>Create Task</h3>
+        <label>Title</label>
+        <input id="title" maxlength="100" placeholder="Task title (required)" />
+        <label>Description</label>
+        <textarea id="description" maxlength="500" rows="3" placeholder="Task description (required)"></textarea>
+        <div style="margin-top:8px;">
+            <button class="btn btn-primary" onclick="createTask()">Create</button>
+            <span id="msg" class="error" style="margin-left:12px;"></span>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <input id="search" placeholder="Search tasks..." oninput="onSearch()" />
+        <div id="pageInfo" style="margin-left:auto"></div>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th><th>Title</th><th>Description</th><th>Created At</th><th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="task-body"></tbody>
+    </table>
+
+    <div style="margin-top:10px;">
+        <button class="btn" onclick="prevPage()">Prev</button>
+        <button class="btn" onclick="nextPage()">Next</button>
+    </div>
+</div>
+
+<!-- ======== MODAL (EDIT POPUP) ======== -->
+<div id="editModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+        <h3>Edit Task</h3>
+
+        <label>Title</label>
+        <input id="editTitle" maxlength="100" />
+
+        <label style="margin-top:10px;">Description</label>
+        <textarea id="editDescription" maxlength="500" rows="4"></textarea>
+
+        <div class="modal-actions">
+            <button class="btn btn-primary" onclick="saveEdit()">Save</button>
+            <button class="btn" onclick="closeEdit()">Cancel</button>
+            <span id="editMsg" class="error"></span>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+
+<script>
+    let page = 0;
+    const size = 5;
+    let currentEditId = null;
+    let searchTimer = null;
+
+    if (!getAuth()) location.href = 'login.html';
+
+    async function loadTasks() {
+        const search = encodeURIComponent(document.getElementById('search').value || '');
+        const tbody = document.getElementById('task-body');
+
+        try {
+            const data = await apiGet(`/api/tasks?search=${search}&page=${page}&size=${size}`);
+            tbody.innerHTML = '';
+
+            if (!data.content || data.content.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5">No tasks found.</td></tr>`;
+            } else {
+                data.content.forEach(t => {
+                    tbody.innerHTML += `
+                    <tr>
+                        <td>${t.id}</td>
+                        <td>${escapeHtml(t.title)}</td>
+                        <td>${escapeHtml(t.description)}</td>
+                        <td>${formatDateOnly(t.createdAt)}</td>
+                        <td>
+                            <button class="btn" onclick="openEdit(${t.id}, '${escapeJs(t.title)}', '${escapeJs(t.description || '')}')">Edit</button>
+                            <button class="btn btn-danger" onclick="doDelete(${t.id})">Delete</button>
+                        </td>
+                    </tr>`;
+                });
+            }
+
+            document.getElementById('pageInfo').innerText = `Page ${page + 1} of ${data.totalPages}`;
+
+        } catch {
+            tbody.innerHTML = `<tr><td colspan="5">Error loading tasks.</td></tr>`;
+        }
+    }
+
+    function escapeJs(str) {
+        return String(str)
+            .replace(/\\/g, "\\\\")
+            .replace(/'/g, "\\'")
+            .replace(/"/g, '\\"')
+            .replace(/\n/g, "\\n");
+    }
+
+    function onSearch() {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => { page = 0; loadTasks(); }, 300);
+    }
+
+    async function createTask() {
+        const title = document.getElementById('title').value.trim();
+        const description = document.getElementById('description').value.trim();
+        const msg = document.getElementById('msg');
+
+        msg.innerText = '';
+
+        if (!title || !description) return msg.innerText = 'Title and Description required.';
+
+        try {
+            await apiPost('/api/tasks', { title, description });
+            document.getElementById('title').value = '';
+            document.getElementById('description').value = '';
+            loadTasks();
+        } catch {
+            msg.innerText = 'Failed to create task.';
+        }
+    }
+
+    function openEdit(id, title, desc) {
+        currentEditId = id;
+        document.getElementById('editTitle').value = title;
+        document.getElementById('editDescription').value = desc;
+        document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEdit() {
+        currentEditId = null;
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    async function saveEdit() {
+        const title = document.getElementById('editTitle').value.trim();
+        const description = document.getElementById('editDescription').value.trim();
+        const msg = document.getElementById('editMsg');
+
+        msg.innerText = '';
+
+        if (!title || !description) return msg.innerText = 'Fields required.';
+
+        try {
+            await apiPut(`/api/tasks/${currentEditId}`, { title, description });
+            closeEdit();
+            loadTasks();
+        } catch {
+            msg.innerText = 'Failed to update.';
+        }
+    }
+
+    async function doDelete(id) {
+        if (!confirm("Delete task?")) return;
+        await apiDelete(`/api/tasks/${id}`);
+        loadTasks();
+    }
+
+    function logout() {
+        sessionStorage.removeItem("basicAuth");
+        location.href = "login.html";
+    }
+
+    loadTasks();
+</script>
+
+</body>
+</html>

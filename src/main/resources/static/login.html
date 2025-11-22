@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Task Manager — Login</title>
+    <link rel="stylesheet" href="style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+        body {
+          margin: 0;
+          padding: 0;
+          background: #f6f7fb;
+          font-family: Arial, sans-serif;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+        }
+
+        .login-wrapper {
+          width: 100%;
+          max-width: 380px;
+          padding: 25px;
+          background: white;
+          border-radius: 14px;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+          animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-wrapper h2 {
+          text-align: center;
+          margin-bottom: 22px;
+          font-size: 24px;
+          color: #222;
+        }
+
+        .form-group {
+          margin-bottom: 15px;
+        }
+
+        label {
+          display: block;
+          font-size: 14px;
+          margin-bottom: 6px;
+          color: #555;
+        }
+
+        input {
+          width: 100%;
+          padding: 10px 12px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          font-size: 15px;
+          box-sizing: border-box;
+          transition: border 0.2s;
+        }
+
+        input:focus {
+          border-color: #4CAF50;
+          outline: none;
+        }
+
+        .btn-login {
+          width: 100%;
+          background: #4CAF50;
+          color: white;
+          border: none;
+          padding: 10px;
+          font-size: 16px;
+          border-radius: 6px;
+          cursor: pointer;
+          margin-top: 8px;
+          transition: 0.2s;
+        }
+
+        .btn-login:hover {
+          background: #43a047;
+        }
+
+        .info {
+          margin-top: 14px;
+          text-align: center;
+          font-size: 13px;
+          color: #666;
+        }
+
+        .error {
+          margin-top: 8px;
+          color: #d9534f;
+          font-size: 14px;
+          text-align: center;
+          display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-wrapper">
+    <h2>Task Manager — Login</h2>
+
+    <div class="form-group">
+        <label>Username</label>
+        <input id="username" type="text" value="admin" />
+    </div>
+
+    <div class="form-group">
+        <label>Password</label>
+        <input id="password" type="password" value="password123" />
+    </div>
+
+    <button class="btn-login" onclick="doLogin()">Login</button>
+
+    <p id="err" class="error">Invalid credentials</p>
+
+    <p class="info">Use <b>admin</b> / <b>password123</b> (per assessment)</p>
+</div>
+
+<script>
+    function encodeBasic(u, p) {
+      return btoa(`${u}:${p}`);
+    }
+
+    function doLogin() {
+      const u = document.getElementById("username").value.trim();
+      const p = document.getElementById("password").value;
+      const err = document.getElementById("err");
+
+      err.style.display = "none";
+
+      if (!u || !p) {
+        err.innerText = "Please fill all fields.";
+        err.style.display = "block";
+        return;
+      }
+
+      const token = encodeBasic(u, p);
+
+      // Try authenticated request to confirm login
+      fetch("/api/tasks?page=0&size=1", {
+        headers: { "Authorization": "Basic " + token }
+      })
+        .then(res => {
+          if (res.status === 200) {
+            sessionStorage.setItem("basicAuth", token);
+            location.href = "tasks.html";
+          } else {
+            err.innerText = "Invalid username or password.";
+            err.style.display = "block";
+          }
+        })
+        .catch(() => {
+          err.innerText = "Backend not running.";
+          err.style.display = "block";
+        });
+    }
+
+    if (sessionStorage.getItem("basicAuth")) {
+      location.href = "tasks.html";
+    }
+</script>
+
+</body>
+</html>

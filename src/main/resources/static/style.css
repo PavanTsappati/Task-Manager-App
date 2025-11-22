@@ -1,0 +1,255 @@
+/* ===============================
+   GLOBAL VARIABLES
+=================================*/
+:root {
+  --sidebar-width: 220px;
+  --header-height: 70px;
+
+  --primary: #4CAF50;
+  --danger: #E64A3C;
+  --gray: #f6f6f6;
+  --border: #dcdcdc;
+
+  --radius: 8px;
+  --shadow: 0px 8px 25px rgba(0,0,0,0.12);
+}
+
+/* ===============================
+   RESET + BASE
+=================================*/
+body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  font-family: Arial, sans-serif;
+}
+
+/* ===============================
+   SIDEBAR
+=================================*/
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: var(--sidebar-width);
+  background: #1f1f1f;
+  padding: 22px;
+  box-sizing: border-box;
+  color: white;
+}
+
+.sidebar h2 {
+  margin-top: 0;
+  font-size: 22px;
+}
+
+.sidebar a {
+  display: block;
+  text-decoration: none;
+  color: #bfbfbf;
+  margin-top: 14px;
+  font-size: 16px;
+}
+
+.sidebar a.active {
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.logout-btn {
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* ===============================
+   HEADER / TOPBAR
+=================================*/
+.topbar {
+  position: fixed;
+  top: 0;
+  left: var(--sidebar-width);
+  right: 0;
+  height: var(--header-height);
+  background: var(--gray);
+  display: flex;
+  align-items: center;
+  padding-left: 20px;
+  box-shadow: var(--shadow);
+  box-sizing: border-box;
+}
+
+/* ===============================
+   PAGE CONTENT
+=================================*/
+.content {
+  margin-left: var(--sidebar-width);
+  margin-top: calc(var(--header-height) + 15px);
+  padding: 20px;
+}
+
+/* ===============================
+   CREATE CARD
+=================================*/
+.create-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+  padding: 16px;
+  max-width: 650px;
+}
+
+.create-card input,
+.create-card textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-top: 5px;
+  box-sizing: border-box;
+}
+
+/* ===============================
+   BUTTONS
+=================================*/
+.btn {
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn:hover {
+  background: #eaeaea;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #3fa045;
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+  border: none;
+}
+
+.btn-danger:hover {
+  background: #c0392b;
+}
+
+/* ===============================
+   TABLES
+=================================*/
+table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid var(--border);
+  padding: 10px;
+}
+
+th {
+  background: #f3f3f3;
+  font-weight: bold;
+}
+
+/* ===============================
+   SEARCH TOOLBAR & PAGINATION
+=================================*/
+.toolbar {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toolbar input {
+  padding: 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  width: 260px;
+}
+
+.pagination {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+}
+
+/* ===============================
+   MODAL POPUP
+=================================*/
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-box {
+  width: 420px;
+  background: white;
+  padding: 22px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  animation: popup 0.25s ease;
+}
+
+@keyframes popup {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.modal-label {
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  display: block;
+}
+
+.modal-input,
+.modal-textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: var(--radius);
+  margin-top: 5px;
+  border: 1px solid var(--border);
+}
+
+.modal-actions {
+  margin-top: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ===============================
+   STATUS COLORS (for logs)
+=================================*/
+.green { color: green; font-weight: bold; }
+.yellow { color: goldenrod; font-weight: bold; }
+.red { color: red; font-weight: bold; }
+
+/* ===============================
+   RESPONSIVE SUPPORT
+=================================*/
+@media(max-width: 750px) {
+  .sidebar { width: 170px; }
+  .topbar { left: 170px; }
+  .content { margin-left: 170px; }
+}

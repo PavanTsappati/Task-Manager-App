@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Audit Logs - Task Manager</title>
+    <link rel="stylesheet" href="style.css" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+        .kv { margin:4px 0; font-size:13px; }
+        .log-content { white-space:pre-wrap; font-family:monospace; background:#f7f7f7; padding:8px; border-radius:4px; }
+    </style>
+</head>
+<body>
+<div class="sidebar">
+    <h2>Task Manager</h2>
+    <a href="tasks.html">Tasks</a>
+    <a href="logs.html" class="active">Audit Logs</a>
+    <div style="margin-top:20px;">
+        <button class="btn" onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<div class="topbar"><h1>Audit Logs</h1></div>
+
+<div class="content">
+    <table>
+        <thead>
+        <tr><th>Timestamp</th><th>Action</th><th>Task ID</th><th>Updated Content</th></tr>
+        </thead>
+        <tbody id="log-body"></tbody>
+    </table>
+
+    <div style="margin-top:12px;">
+        <button class="btn" onclick="prevLog()">Prev</button>
+        <button class="btn" onclick="nextLog()">Next</button>
+        <span id="logPageInfo" style="margin-left:12px"></span>
+    </div>
+</div>
+
+<script src="script.js"></script>
+<script>
+    if (!getAuth()) location.href = 'login.html';
+    let logPage = 0;
+    const logSize = 10;
+
+    async function loadLogs() {
+      try {
+        const data = await apiGet(`/api/logs?page=${logPage}&size=${logSize}`);
+        const tbody = document.getElementById('log-body');
+        tbody.innerHTML = '';
+
+        if (!data.content || data.content.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4">No logs found.</td></tr>`;
+        } else {
+          data.content.forEach(l => {
+            let cls = '';
+            const actionLower = (l.action || '').toLowerCase();
+            if (actionLower.includes('create')) cls = 'green';
+            else if (actionLower.includes('update')) cls = 'yellow';
+            else if (actionLower.includes('delete')) cls = 'red';
+
+            const updated = l.updatedContent || l.updatedContentJson || null;
+            let updatedHtml = '';
+            if (updated && typeof updated === 'object') {
+              for (const k of Object.keys(updated)) {
+                updatedHtml += `<div class="kv"><strong>${escapeHtml(k)}:</strong> ${escapeHtml(String(updated[k]))}</div>`;
+              }
+            } else if (updated && typeof updated === 'string') {
+              try {
+                const parsed = JSON.parse(updated);
+                for (const k of Object.keys(parsed)) {
+                  updatedHtml += `<div class="kv"><strong>${escapeHtml(k)}:</strong> ${escapeHtml(String(parsed[k]))}</div>`;
+                }
+              } catch (e) {
+                updatedHtml = `<div class="log-content">${escapeHtml(String(updated))}</div>`;
+              }
+            } else {
+              updatedHtml = '<div class="kv">-</div>';
+            }
+
+            tbody.innerHTML += `
+              <tr>
+                <td>${formatDateOnly(l.timestamp)}</td>
+                <td class="${cls}">${escapeHtml(l.action || '')}</td>
+                <td>${l.taskId || ''}</td>
+                <td>${updatedHtml}</td>
+              </tr>
+            `;
+          });
+        }
+
+        const info = document.getElementById('logPageInfo');
+        if (data.totalPages !== undefined) info.innerText = `Page ${logPage+1} of ${data.totalPages}`;
+        else info.innerText = '';
+      } catch (e) {
+        console.error(e);
+        document.getElementById('log-body').innerHTML = `<tr><td colspan="4">Error loading logs.</td></tr>`;
+      }
+    }
+
+    function nextLog() { logPage++; loadLogs(); }
+    function prevLog() { if (logPage>0) { logPage--; loadLogs(); } }
+
+    function logout() {
+      sessionStorage.removeItem('basicAuth');
+      location.href = 'login.html';
+    }
+
+    loadLogs();
+</script>
+</body>
+</html>

@@ -25,7 +25,7 @@ The app supports secure authentication, CRUD operations, search, pagination, and
 |-------|-------------|
 | Backend | Spring Boot, Spring Security, JPA/Hibernate |
 | Frontend | HTML, CSS, JavaScript |
-| Database | H2 (or MySQL ready) |
+| Database | H2  |
 | Build Tool | Maven |
 | Version Control | Git & GitHub |
 

@@ -1,124 +1,170 @@
-# Task Manager App (Spring Boot + Vanilla JS)
+# 📝 Task Manager Application
 
-A modern and functional **Task Management Application** built using **Spring Boot, Java, HTML, CSS, and JavaScript.**  
-The app supports secure authentication, CRUD operations, search, pagination, and a detailed audit log tracking system.
+A functional Task Manager built using **Spring Boot**, featuring authentication, CRUD task operations, and audit trail logging.  
+This project demonstrates core backend skills such as **REST API development, service-layer architecture, logging, and database handling with Spring Data JPA.**
 
 ---
 
 ## 🚀 Features
 
-✔ Create, View, Edit, and Delete tasks  
-✔ Search tasks by title or description  
-✔ Pagination support (5 tasks per page)  
-✔ Audit Log showing detailed changes  
-✔ Only updated fields logged in edit mode  
-✔ Color-coded activity logs  
-✔ Protected API routes using **Basic Authentication**  
-✔ Clean and responsive UI  
-✔ Validation on both frontend & backend  
+- 🔐 User Login System  
+- 📝 Create, Read, Update, Delete Tasks  
+- 🔍 Search and Pagination  
+- 📜 Audit Logs for every action  
+- 🗄️ Database integration with Spring Data JPA  
+- 🌍 REST API with JSON responses  
 
 ---
 
-## 🛠 Tech Stack
+## 📌 Tech Stack
 
-| Layer | Technologies |
-|-------|-------------|
-| Backend | Spring Boot, Spring Security, JPA/Hibernate |
-| Frontend | HTML, CSS, JavaScript |
-| Database | H2  |
-| Build Tool | Maven |
-| Version Control | Git & GitHub |
+| Category | Technology |
+|---------|------------|
+| Framework | Spring Boot |
+| Database | MySQL / H2 |
+| ORM | Spring Data JPA |
+| Architecture | Controller → Service → Repository |
+| UI | HTML, CSS, JavaScript |
+| Logging | Custom Audit Logging |
+
+---
+
+## 📸 Application Preview
+
+---
+
+### 🔐 Login Page
+
+<p align="center">
+  <img src="Login Page.png" width="800">
+</p>
+
+---
+
+### 📝 Task Management Page
+
+<p align="center">
+  <img src="Task Page.png" width="800">
+</p>
+
+---
+
+### 📜 Audit Log Page
+
+<p align="center">
+  <img src="AuditLog Page.png" width="800">
+</p>
 
 ---
 
 ## 🔐 Authentication
 
-All protected endpoints require Basic Auth.
-
-| Username | Password |
-|----------|----------|
-| `admin` | `password123` |
-
----
-
-## 📂 Project Structure
+Users must log in before accessing the system.
 
 ```
-src/
- └── main
-      ├── java/com.qc.taskmanager
-      │      ├── config
-      │      ├── controller
-      │      ├── model
-      │      ├── repository
-      │      └── service
-      └── resources
-            ├── static/
-            │     ├── login.html
-            │     ├── tasks.html
-            │     ├── logs.html
-            │     ├── style.css
-            │     └── script.js
-            └── application.properties
+Username: admin
+Password: password123
 ```
 
 ---
 
-## ▶️ Running the Application
+## 📂 Task Management
 
-### 1️⃣ Clone the project
-```
-git clone https://github.com/PavanTsappati/Task-Manager-App.git
-cd Task-Manager-App
-```
+After login, users can:
 
-### 2️⃣ Run via Maven
-```
-mvn spring-boot:run
-```
+- Add new tasks  
+- Edit or update existing tasks  
+- Delete a task  
+- View paginated task list  
+- Search tasks using keywords  
 
-### 3️⃣ Open the App
+### API Endpoints
 
-```
-http://localhost:8080/login.html
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/tasks` | Create a task |
+| GET | `/tasks` | Get all/paginated tasks |
+| PUT | `/tasks/{id}` | Update a task |
+| DELETE | `/tasks/{id}` | Delete a task |
+
+---
+
+## 🧾 Audit Logging
+
+Every change is recorded, including:
+
+- Task Create
+- Task Update
+- Task Delete
+- Timestamp + Task ID
+
+Example entry:
+
+```json
+{
+  "action": "Task Updated",
+  "taskId": 4,
+  "timestamp": "2025-11-23T15:31:02"
+}
 ```
 
 ---
 
-## 📊 Audit Log Example
+## 📁 Folder Structure
 
-| Timestamp | Action | Task ID | Updated Fields |
-|-----------|--------|---------|---------------|
-| 2025-11-22 | Create Task | 1 | `{title, description}` |
-| 2025-11-22 | Update Task | 1 | `{description}` |
-| 2025-11-22 | Delete Task | 1 | `null` |
-
----
-
-## 🧪 Validations
-
-- Title (required, max 100 chars)  
-- Description (required, max 500 chars)  
+```
+src/main/java/com/taskmanager
+ ┣ controller       → Handles API requests
+ ┣ entity           → Task & AuditLog models
+ ┣ repository       → Database CRUD interfaces
+ ┣ service          → Business logic + audit tracking
+ ┗ security         → Login handling
+```
 
 ---
 
-## 🔮 Possible Future Enhancements
+## 🧪 Error Handling
+
+The app returns proper structured responses in case of invalid operations (ex: editing non-existing task).
+
+```json
+{
+  "error": "Task not found",
+  "status": 404
+}
+```
+
+---
+
+## 🏁 How to Run Locally
+
+1. Clone the repository  
+2. Update database config in `application.properties`  
+3. Run the Spring Boot application  
+4. Open browser:
+
+```
+http://localhost:8080
+```
+
+---
+
+## ⭐ Why This Project Matters
+
+✔ Real-world structure (Controller → Service → Repository)  
+✔ Includes authentication + database + logging  
+✔ Good portfolio project for backend roles  
+✔ Easy to extend with JWT or frontend frameworks  
+
+---
+
+## 🔧 Future Enhancements
 
 - JWT Authentication  
-- Role-based users (Admin/User)
-- Dark/Light theme toggle
-- Docker configuration support  
+- Role-based access control  
+- Docker Support  
+- React/Angular Frontend  
 
 ---
 
-## 👨‍💻 Author
-
-**Pavan Tsappati**  
-Backend Developer — Java • Spring Boot  
-📧 Email: pavan.tsappati25@gmail.com  
-🔗 GitHub: https://github.com/PavanTsappati  
-
----
-
-## ⭐ If this project helped or impressed you — consider giving it a ⭐ on GitHub!
-
+### 📌 Status: Completed ✔
